@@ -1,0 +1,11 @@
+name: Dervish
+version: '${project.version}'
+main: com.emirkabal.dervish.Main
+commands:
+  setposition:
+    description: "setposition"
+    aliases: ["setspawn", "setpos"]
+  getposition:
+    description: "getposition"
+    aliases: ["getpos", "spawn"]
+  eventitem:
