@@ -71,12 +71,10 @@ public class CustomPlayer extends BukkitRunnable {
         player.damage(3.5D);
     }
 
-    public void sendSound(Location location, Sound sound, Integer bir, Integer iki) {
-        player.playSound(location, sound, (float)bir, (float)iki);
+    public void sendSound(Location location, Sound sound, float bir, float iki) {
+        player.playSound(location, sound, bir, iki);
     }
-    public void giveAllahSword(){
-        this.player.getLocation().getWorld().dropItem(player.getLocation(), CustomItem.of(Material.STICK).withName("§9Allahın sopası").get());
-    }
+
     public void giveKit() {
         this.clearInventory();
         ItemStack ironSword = new ItemStack(Material.IRON_SWORD, 1);
@@ -120,24 +118,26 @@ public class CustomPlayer extends BukkitRunnable {
         this.player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2));
     }
 
+    public void removePotionEffects() {
+        for(PotionEffect effect : this.player.getActivePotionEffects()) {
+            this.player.removePotionEffect(effect.getType());
+        }
+    }
+
     public void forceRespawn() {
+        this.player.teleport(Core.getSpawn(this.player.getWorld(), ""));
+        this.player.setGameMode(GameMode.ADVENTURE);
+        this.clearInventory();
         this.player.setMaxHealth(20);
         this.player.setHealth(20);
         this.player.setFoodLevel(20);
         this.player.setFireTicks(0);
-        this.clearInventory();
-        this.player.setGameMode(GameMode.SURVIVAL);
-        if (Core.getPosition("spawn") != null) this.player.teleport(Core.getPosition("spawn"));
-        else this.player.teleport(this.player.getWorld().getSpawnLocation());
-        this.player.setGameMode(GameMode.ADVENTURE);
         this.player.hidePlayer(this.player);
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
             CustomPlayer.this.player.showPlayer(CustomPlayer.this.player);
             cancel();
         }, 10L);
-        for(PotionEffect effect : this.player.getActivePotionEffects()) {
-            this.player.removePotionEffect(effect.getType());
-        }
+        this.removePotionEffects();
     }
 
 

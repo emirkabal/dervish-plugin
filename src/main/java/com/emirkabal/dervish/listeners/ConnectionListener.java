@@ -4,8 +4,12 @@ import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomItem;
 import com.emirkabal.dervish.core.CustomPlayer;
+import fr.xephi.authme.api.v3.AuthMeApi;
+import fr.xephi.authme.events.LoginEvent;
+import fr.xephi.authme.events.RegisterEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,7 +26,7 @@ public class ConnectionListener implements Listener {
     public void onLeave(PlayerQuitEvent e){
         e.setQuitMessage(null);
         Player p = e.getPlayer();
-        e.setQuitMessage((p.isOp() ? "§4" : "§a")+p.getDisplayName()+" §7joined the game.");
+        e.setQuitMessage((p.isOp() ? "§4" : "§a")+p.getDisplayName()+" §7left the game.");
         if(PlayerListener.lastdamage.get(p) != null && p.getGameMode() == GameMode.SURVIVAL){
             Chicken chicken = (Chicken) p.getWorld().spawnEntity(p.getLocation(), EntityType.CHICKEN);
             Zombie zombie = (Zombie) p.getWorld().spawnEntity(p.getLocation(), EntityType.ZOMBIE);
@@ -58,27 +62,45 @@ public class ConnectionListener implements Listener {
         Player p = e.getPlayer();
         e.setJoinMessage((p.isOp() ? "§4" : "§a")+p.getDisplayName()+" §7joined the game.");
         CustomPlayer cp = new CustomPlayer(p);
-        if(PlayerListener.chickens.get(p.getName()) != null){
+        for ( Player  players : Bukkit.getOnlinePlayers()) {
+            players.playSound(p.getLocation(), Sound.NOTE_PIANO, 0.3F, 0.3F);
+        }
+        if(PlayerListener.chickens.get(p.getName()) != null) {
+            AuthMeApi.getInstance().forceLogin(p);
             Chicken chicken = PlayerListener.chickens.get(p.getName());
             p.teleport(chicken.getLocation());
             chicken.getPassenger().remove();
             chicken.remove();
             PlayerListener.chickenPlayers.remove(chicken);
-            PlayerListener.chickens.remove(p.getName());
         }else{
-            if (Core.getPosition("spawn") != null) p.teleport(Core.getPosition("spawn"));
-            else p.teleport(p.getWorld().getSpawnLocation());
-            p.setGameMode(GameMode.ADVENTURE);
+            p.teleport(Core.getSpawn(Bukkit.getWorld("lobby"), "lobby"));
             cp.clearInventory();
+            cp.removePotionEffects();
+            p.setGameMode(GameMode.ADVENTURE);
             p.setHealth(p.getMaxHealth());
             p.setFoodLevel(1000);
         }
     }
 
     @EventHandler
+    public void onLogin(LoginEvent e) {
+        if(PlayerListener.chickens.get(e.getPlayer().getName()) == null) {
+            e.getPlayer().teleport(Core.getSpawn(Bukkit.getWorld(Core.currentWorld), ""));
+        } else {
+            PlayerListener.chickens.remove(e.getPlayer().getName());
+        }
+    }
+
+    @EventHandler
+    public void onRegister(RegisterEvent e) {
+        AuthMeApi.getInstance().forceLogin(e.getPlayer());
+    }
+
+
+    @EventHandler
     public void onPing(ServerListPingEvent e) {
         e.setMaxPlayers(24);
-        e.setMotd("§e§lEmir Kabal Minecraft§r §7- §aBattlegrounds Server");
+        e.setMotd("§e§lThe Battlegrounds Server §6[Kit PvP]\n§r§bCustom PvP Hits - Improved Fishing Rod ");
     }
 
 

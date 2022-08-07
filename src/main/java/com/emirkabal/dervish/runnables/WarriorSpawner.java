@@ -1,7 +1,8 @@
-package com.emirkabal.dervish.utils;
+package com.emirkabal.dervish.runnables;
 
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomItem;
+import com.emirkabal.dervish.utils.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -69,7 +70,11 @@ public class WarriorSpawner extends BukkitRunnable {
                 zombie.setBaby(false);
                 zombie.setCustomNameVisible(true);
                 zombie.setVillager(false);
+                zombie.setRemoveWhenFarAway(false);
                 zombie.setCanPickupItems(false);
+                if (zombie.getPassenger() != null) {
+                    zombie.getPassenger().remove();
+                }
                 zombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999, 2, true, true));
                 zombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 9999, 1, true, true));
                 EntityEquipment ee = zombie.getEquipment();

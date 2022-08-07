@@ -2,13 +2,14 @@ package com.emirkabal.dervish.commands;
 
 import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
+import com.emirkabal.dervish.utils.ConfigUtil;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GetPosition implements CommandExecutor {
+public class SetSafeLocation implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) {
@@ -16,16 +17,19 @@ public class GetPosition implements CommandExecutor {
             return true;
         }
         Player p = (Player) sender;
-        if(!(p.hasPermission("admin.getpos") || p.hasPermission("admin.*") || p.isOp())) {
+        if(!(p.hasPermission("admin.setsafelocation") || p.hasPermission("admin.*") || p.isOp())) {
             p.sendMessage(Main.NO_PERM);
             return true;
         }
-        Location loc = p.getLocation();
-        if (Core.getPosition(args.length != 0 ? p.getWorld().getName()+"."+args[0] : p.getWorld().getName()+".spawn") == null) {
-            p.sendMessage(Main.PREFIX+"Position not found.");
-        }
-        p.teleport(Core.getPosition(args[0] != null ? p.getWorld().getName()+"."+args[0] : p.getWorld().getName()+".spawn"));
-        p.sendMessage(Main.PREFIX+"You teleported to "+(args[0] != null ? args[0] : "spawn"));
+
+
+        double safeCord = args.length == 0 ? p.getLocation().getY() : Double.parseDouble(args[0]);
+
+        ConfigUtil.conf().set("maxSafeLocation."+p.getWorld().getName(), safeCord);
+        ConfigUtil.saveAll();
+
+        p.sendMessage(Main.PREFIX+"Max safe location changed to "+safeCord+"y on "+p.getWorld().getName());
+
         return false;
     }
 }

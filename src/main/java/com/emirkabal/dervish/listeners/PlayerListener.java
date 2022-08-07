@@ -3,6 +3,7 @@ package com.emirkabal.dervish.listeners;
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomItem;
 import com.emirkabal.dervish.core.CustomPlayer;
+import com.emirkabal.dervish.utils.ConfigUtil;
 import com.emirkabal.dervish.utils.RandomColor;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
@@ -23,7 +25,7 @@ public class PlayerListener implements Listener {
     public static HashMap<String, Chicken> chickens = new HashMap();
     public static HashMap<Chicken, Player> chickenPlayers = new HashMap();
     public static ArrayList<String> inventoryRemoveList = new ArrayList<>();
-
+    public static ArrayList<String> fishingRodCombo = new ArrayList<>();
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent e) {
@@ -34,8 +36,10 @@ public class PlayerListener implements Listener {
         if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) e.setDeathMessage("§a"+e.getEntity().getDisplayName()+"§7 killed by §c"+e.getEntity().getKiller().getDisplayName()+"§7 with §c"+String.format("%.1f", e.getEntity().getKiller().getHealth() / 2)+" heart");
         p.sendFirework(FireworkEffect.Type.CREEPER, RandomColor.dye(), RandomColor.dye(), 2);
         p.deathSpectate();
+        p.getSpigotPlayer().setHealth(20);
         if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
             e.getEntity().getKiller().getInventory().addItem(CustomItem.of(Material.GOLDEN_APPLE, 1).get());
+            e.getEntity().getKiller().getInventory().addItem(CustomItem.of(Material.ARROW, 1).get());
             p.getSpigotPlayer().teleport(e.getEntity().getKiller(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(),()->{
                 p.getSpigotPlayer().setSpectatorTarget(e.getEntity().getKiller());
@@ -43,12 +47,13 @@ public class PlayerListener implements Listener {
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
             p.forceRespawn();
-        }, 20 * 6);
+        }, 20 * 4);
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if (e.getTo().getY() <= 115) {
+        double yCord = ConfigUtil.conf().getDouble("maxSafeLocation."+e.getPlayer().getWorld().getName());
+        if (e.getTo().getY() <= yCord) {
             e.getPlayer().damage(99999);
         }
     }
@@ -62,14 +67,12 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPickup(PlayerPickupItemEvent e) {
-
         if (e.getItem().getType() == EntityType.DROPPED_ITEM && e.getItem().getItemStack().getType() == Material.DIAMOND_LEGGINGS) {
             e.setCancelled(true);
             e.getPlayer().getInventory().setLeggings(e.getItem().getItemStack());
             e.getItem().remove();
             e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.HORSE_ARMOR, 1, 1);
         }
-
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -91,6 +94,24 @@ public class PlayerListener implements Listener {
             if (p.getGameMode() == GameMode.ADVENTURE) {
                 e.setCancelled(true);
             }
+            if (fishingRodCombo.contains(p.getName())) {
+                fishingRodCombo.remove(p.getName());
+                p.setMaximumNoDamageTicks(20);
+                p.setNoDamageTicks(20);
+            }
+            if (fishingRodCombo.contains(p.getName()) == false && e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
+                fishingRodCombo.add(p.getName());
+                p.setMaximumNoDamageTicks(1);
+                p.setNoDamageTicks(1);
+            }
+
+        }
+    }
+
+    @EventHandler
+    public void onHunger(FoodLevelChangeEvent e) {
+        if (e.getEntity().getGameMode() == GameMode.ADVENTURE) {
+            e.setFoodLevel(20);
         }
     }
 
@@ -106,7 +127,10 @@ public class PlayerListener implements Listener {
 
         if (damager instanceof Player && event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            if (lastdamage.get(player) == null) {
+            if (((Player) damager).getGameMode() == GameMode.ADVENTURE) {
+                event.setCancelled(true);
+                return;
+            } else if (lastdamage.get(player) == null) {
                 Player lastdamager = (Player) event.getDamager();
                 lastdamage.put(player, lastdamager);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {

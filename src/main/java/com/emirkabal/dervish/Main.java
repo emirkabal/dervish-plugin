@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
 
     public static Main instance;
-    public static final String PREFIX = "§8[§7Dervish§8]§r ";
+    public static final String PREFIX = "§8[§7Battlegrounds§8]§r ";
     public static final String NO_PERM = PREFIX + "§cYou don't have permission.";
     public static final String NO_CONSOLE = PREFIX + "You don't run this command in console.";
     private static final ConsoleCommandSender cs = Bukkit.getConsoleSender();
@@ -22,6 +22,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         cs.sendMessage(PREFIX+"§aEnabled");
+        Core.loadWorlds();
         saveDefaultConfig();
         loadCmds();
         loadListeners();
@@ -41,6 +42,11 @@ public class Main extends JavaPlugin {
         getCommand("setposition").setExecutor(new SetPosition());
         getCommand("getposition").setExecutor(new GetPosition());
         getCommand("eventitem").setExecutor(new EventItem());
+        getCommand("getworld").setExecutor(new GetWorld());
+        getCommand("removeworld").setExecutor(new RemoveWorld());
+        getCommand("addworld").setExecutor(new AddWorld());
+        getCommand("changeworld").setExecutor(new ChangeWorld());
+        getCommand("setsafelocation").setExecutor(new SetSafeLocation());
     }
 
     void loadListeners(){
@@ -50,6 +56,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new ConnectionListener(), this);
         pm.registerEvents(new ActionListener(), this);
         pm.registerEvents(new DamageListener(), this);
+        pm.registerEvents(new CustomKnockbackListener(), this);
     }
 
     public static Main getInstance() {

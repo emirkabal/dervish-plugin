@@ -1,4 +1,4 @@
-name: Dervish
+name: Battlegrounds
 version: '${project.version}'
 main: com.emirkabal.dervish.Main
 commands:
@@ -9,3 +9,8 @@ commands:
     description: "getposition"
     aliases: ["getpos", "spawn"]
   eventitem:
+  getworld:
+  addworld:
+  removeworld:
+  changeworld:
+  setsafelocation:

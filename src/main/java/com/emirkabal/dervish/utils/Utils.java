@@ -2,6 +2,8 @@ package com.emirkabal.dervish.utils;
 
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomPlayer;
+import com.emirkabal.dervish.runnables.Sidebar;
+import com.emirkabal.dervish.runnables.WarriorSpawner;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -34,6 +36,7 @@ public class Utils {
         return spawnl;
     }
     public static void pluginEnabled(){
+        new Sidebar();
         for(World world : Bukkit.getWorlds()){
             for(Entity entity: world.getEntities()){
                 if(entity instanceof Player){

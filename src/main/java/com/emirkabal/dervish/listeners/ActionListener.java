@@ -4,13 +4,11 @@ import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomItem;
 import com.emirkabal.dervish.core.CustomPlayer;
-import com.emirkabal.dervish.utils.WarriorSpawner;
+import com.emirkabal.dervish.runnables.WarriorSpawner;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -43,11 +41,12 @@ public class ActionListener implements Listener {
                 sign.setLine(2, sign.getLine(1));
                 sign.setLine(1, "§1§lWarp");
                 sign.update();
-            } else if (sign.getLine(1).equalsIgnoreCase("§1§lWarp") && sign.getLine(2) != null && Core.getPosition(sign.getLine(2).toLowerCase(Locale.ROOT)) != null) {
+            } else if (sign.getLine(1).equalsIgnoreCase("§1§lWarp") && sign.getLine(2) != null && Core.getPosition(sign.getWorld().getName()+"."+sign.getLine(2).toLowerCase(Locale.ROOT)) != null) {
                 CustomPlayer p = new CustomPlayer(e.getPlayer());
                 p.giveKit();
-                e.getPlayer().teleport(Core.getPosition(sign.getLine(2).toLowerCase(Locale.ROOT)));
-                e.getPlayer().sendMessage(Main.PREFIX+"You teleported to "+sign.getLine(2)+".");
+                p.getSpigotPlayer().setFoodLevel(20);
+                p.getSpigotPlayer().teleport(Core.getPosition(sign.getWorld().getName()+"."+sign.getLine(2).toLowerCase(Locale.ROOT)));
+                p.getSpigotPlayer().sendMessage(Main.PREFIX+"You teleported to "+sign.getLine(2)+".");
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                     e.getPlayer().setGameMode(GameMode.SURVIVAL);
                 }, 20 * 2);

@@ -1,8 +1,8 @@
 package com.emirkabal.dervish.listeners;
 
+import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomItem;
-import com.emirkabal.dervish.utils.RandomColor;
-import com.emirkabal.dervish.utils.WarriorSpawner;
+import com.emirkabal.dervish.runnables.WarriorSpawner;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -13,8 +13,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.inventory.meta.FireworkMeta;
-
-import java.util.Arrays;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 
 public class EntityListener implements Listener {
@@ -50,6 +50,13 @@ public class EntityListener implements Listener {
 //        return (ItemStack) RANDOM.nextObject(RANDOM_ITEM);
 //    }
 
+    @EventHandler
+    public void onPickupProjectileHit(ProjectileHitEvent e) {
+        if (e.getEntityType() != EntityType.ARROW) return;
+        e.getEntity().remove();
+    }
+
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onTarget(EntityTargetLivingEntityEvent e){
         if(e.getEntity().getType() == EntityType.ZOMBIE && e.getEntity().isInsideVehicle() && e.getEntity().getVehicle().getCustomName() != null && e.getEntity().getVehicle().getCustomName().startsWith("§7Chicken")){
@@ -57,9 +64,9 @@ public class EntityListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onNaturalSpawn(CreatureSpawnEvent e) {
-        if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
+        if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL || e.getEntityType() == EntityType.SKELETON) {
             e.setCancelled(true);
         }
     }
@@ -68,9 +75,19 @@ public class EntityListener implements Listener {
     public void fishingThrow(ProjectileLaunchEvent e){
         if(e.getEntityType().equals(EntityType.FISHING_HOOK)){
             Projectile hook = e.getEntity();
-            hook.setVelocity(hook.getVelocity().multiply(1.4));
+            hook.setVelocity(hook.getVelocity().multiply(1.38));
         }
     }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent e) {
+//        Bukkit.broadcastMessage(e.getEntity().getName()+"   -   "+e.getCause().toString());
+        if (e.getCause() == EntityDamageEvent.DamageCause.VOID && e.getEntity().isDead() == false) {
+            LivingEntity l = (LivingEntity) e.getEntity();
+            l.damage(99999999);
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeathEntity(EntityDeathEvent e){
@@ -95,7 +112,9 @@ public class EntityListener implements Listener {
                     if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
                         Player killer = e.getEntity().getKiller();
                         Bukkit.broadcastMessage("§7"+victim.getDisplayName()+"§a killed by §c"+e.getEntity().getKiller().getDisplayName()+"§7 with §c"+String.format("%.1f", e.getEntity().getKiller().getHealth() / 2)+" heart");;
-                        killer.getInventory().addItem(CustomItem.of(Material.GOLDEN_APPLE).get());
+                        killer.getInventory().addItem(CustomItem.of(Material.GOLDEN_APPLE, 1).get());
+                        killer.getInventory().addItem(CustomItem.of(Material.ARROW, 1).get());
+                        killer.setHealth(20);
                     }
                     Firework fw = (Firework) chicken.getWorld().spawnEntity(chicken.getLocation(), EntityType.FIREWORK);
                     FireworkMeta fwm = fw.getFireworkMeta();
