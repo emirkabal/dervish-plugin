@@ -47,6 +47,7 @@ public class Main extends JavaPlugin {
         getCommand("addworld").setExecutor(new AddWorld());
         getCommand("changeworld").setExecutor(new ChangeWorld());
         getCommand("setsafelocation").setExecutor(new SetSafeLocation());
+        getCommand("ping").setExecutor(new Ping());
     }
 
     void loadListeners(){

@@ -5,7 +5,11 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class Core {
     public static String currentWorld;
@@ -84,6 +88,21 @@ public class Core {
         }
 
         Bukkit.broadcastMessage(Main.PREFIX+"World changed to "+worldName);
+    }
+
+    public static int getPing(Player player) {
+        try {
+            Method handle = player.getClass().getMethod("getHandle");
+            Object nmsHandle = handle.invoke(player);
+            Field pingField = nmsHandle.getClass().getField("ping");
+            return pingField.getInt(nmsHandle);
+        }
+        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
+               | NoSuchFieldException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "Exception while trying to get player ping.", e);
+        }
+
+        return -1;
     }
 
     public static Location getSpawn(World w, String position) {

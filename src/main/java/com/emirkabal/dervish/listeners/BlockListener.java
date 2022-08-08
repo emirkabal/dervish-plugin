@@ -35,7 +35,10 @@ public class BlockListener implements Listener {
                         e.getClickedBlock().getType() == Material.TRAPPED_CHEST ||
                         e.getClickedBlock().getType() == Material.ENCHANTMENT_TABLE ||
                         e.getClickedBlock().getType() == Material.BREWING_STAND ||
-                        e.getClickedBlock().getType() == Material.BREWING_STAND_ITEM
+                        e.getClickedBlock().getType() == Material.BREWING_STAND_ITEM ||
+                        e.getClickedBlock().getType() == Material.ITEM_FRAME ||
+                        e.getClickedBlock().getType() == Material.MINECART ||
+                        e.getClickedBlock().getType() == Material.STORAGE_MINECART
                 )
         ) {
             e.setCancelled(true);
