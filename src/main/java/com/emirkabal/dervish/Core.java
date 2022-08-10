@@ -1,9 +1,15 @@
 package com.emirkabal.dervish;
 
+import com.emirkabal.dervish.core.CustomPlayer;
 import com.emirkabal.dervish.utils.ConfigUtil;
+import com.emirkabal.dervish.utils.RandomColor;
+import com.emirkabal.dervish.utils.Utils;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.FireworkMeta;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -114,6 +120,20 @@ public class Core {
     public static Location getSpawn(World w, String position) {
         if (getPosition(position.length() > 0 ? position : currentWorld+".spawn") == null) return w.getSpawnLocation();
         else return getPosition(position.length() > 0 ? position : currentWorld+".spawn");
+    }
+
+    public static void spawnFirework(Location loc, FireworkEffect.Type type, Color color1, Color color2, Integer power) {
+        Firework fw = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+        FireworkMeta fwm = fw.getFireworkMeta();
+        fwm.setPower(power);
+        fwm.addEffect(FireworkEffect.builder().flicker(true).trail(true).with(type).withColor(color1).withFade(color2).build());
+        fw.setFireworkMeta(fwm);
+    }
+    public static void applyWinnerEffects(Player p) {
+        spawnFirework(p.getLocation(), FireworkEffect.Type.STAR, RandomColor.dye(), RandomColor.dye(), 2);
+        for (Location loc : Utils.getCircle(p.getLocation().add(0,1,0), 10, 20)) {
+            spawnFirework(loc, FireworkEffect.Type.STAR, RandomColor.dye(), RandomColor.dye(), 2);
+        }
     }
 
 

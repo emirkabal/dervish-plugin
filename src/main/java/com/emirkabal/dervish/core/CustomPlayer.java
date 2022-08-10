@@ -40,12 +40,7 @@ public class CustomPlayer extends BukkitRunnable {
     }
 
     public void sendFirework(FireworkEffect.Type type, Color color1, Color color2, Integer power) {
-        Location loc = player.getLocation();
-        Firework fw = (Firework)player.getLocation().getWorld().spawnEntity(loc, EntityType.FIREWORK);
-        FireworkMeta fwm = fw.getFireworkMeta();
-        fwm.setPower(power);
-        fwm.addEffect(FireworkEffect.builder().flicker(true).trail(true).with(type).withColor(color1).withFade(color2).build());
-        fw.setFireworkMeta(fwm);
+        Core.spawnFirework(this.player.getLocation(), type, color1, color2, power);
     }
 
     public void sendTitle(String label1, String label2) {

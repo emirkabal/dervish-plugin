@@ -43,7 +43,6 @@ public class PlayerListener implements Listener {
             killer.getSpigotPlayer().setHealth(e.getEntity().getMaxHealth());
             killer.getSpigotPlayer().playSound(e.getEntity().getKiller().getLocation(), Sound.NOTE_PIANO, 0.6F, 0.6F);
             killer.repairAllItems();
-            PlayerPoints.addPoints(killer.getSpigotPlayer().getName());
 
             p.getSpigotPlayer().teleport(e.getEntity().getKiller(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(),()->{

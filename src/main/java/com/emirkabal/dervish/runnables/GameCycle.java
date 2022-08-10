@@ -2,6 +2,7 @@ package com.emirkabal.dervish.runnables;
 
 import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
+import com.emirkabal.dervish.core.CustomPlayer;
 import com.emirkabal.dervish.utils.PlayerPoints;
 import com.emirkabal.dervish.utils.Sidebar;
 import com.emirkabal.dervish.utils.Utils;
@@ -40,6 +41,10 @@ public class GameCycle extends BukkitRunnable {
             Core.sendMessageToAll("§6§lThe winner this round was...");
             if (PlayerPoints.hasWinner()) {
                 Core.sendMessageToAll("§e"+PlayerPoints.getWinner()+"§6§l!");
+                Player winner = Bukkit.getPlayer(PlayerPoints.getWinner());
+                if (winner != null) {
+                    Core.applyWinnerEffects(winner);
+                }
             } else {
                 Core.sendMessageToAll("No winner for this round.");
             }
