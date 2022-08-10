@@ -2,7 +2,6 @@ package com.emirkabal.dervish;
 
 import com.emirkabal.dervish.commands.*;
 import com.emirkabal.dervish.listeners.*;
-import com.emirkabal.dervish.utils.Runnables;
 import com.emirkabal.dervish.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
@@ -26,7 +25,6 @@ public class Main extends JavaPlugin {
         saveDefaultConfig();
         loadCmds();
         loadListeners();
-        Runnables.startAll();
         Utils.pluginEnabled();
     }
 
@@ -41,13 +39,14 @@ public class Main extends JavaPlugin {
     void loadCmds(){
         getCommand("setposition").setExecutor(new SetPosition());
         getCommand("getposition").setExecutor(new GetPosition());
-        getCommand("eventitem").setExecutor(new EventItem());
         getCommand("getworld").setExecutor(new GetWorld());
         getCommand("removeworld").setExecutor(new RemoveWorld());
         getCommand("addworld").setExecutor(new AddWorld());
         getCommand("changeworld").setExecutor(new ChangeWorld());
         getCommand("setsafelocation").setExecutor(new SetSafeLocation());
         getCommand("ping").setExecutor(new Ping());
+        getCommand("stats").setExecutor(new Stats());
+        getCommand("timer").setExecutor(new Timer());
     }
 
     void loadListeners(){

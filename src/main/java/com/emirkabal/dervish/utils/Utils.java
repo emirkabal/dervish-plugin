@@ -2,12 +2,10 @@ package com.emirkabal.dervish.utils;
 
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomPlayer;
-import com.emirkabal.dervish.runnables.Sidebar;
-import com.emirkabal.dervish.runnables.WarriorSpawner;
+import com.emirkabal.dervish.runnables.GameCycle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -36,17 +34,12 @@ public class Utils {
         return spawnl;
     }
     public static void pluginEnabled(){
-        new Sidebar();
+        new GameCycle();
         for(World world : Bukkit.getWorlds()){
             for(Entity entity: world.getEntities()){
                 if(entity instanceof Player){
                     CustomPlayer cp = new CustomPlayer((Player) entity);
                     cp.getSpigotPlayer().sendMessage(Main.PREFIX+"Plugin reloaded.");
-                }
-                if(entity instanceof ArmorStand && entity.getCustomName() != null && entity.getCustomName().startsWith("§a")) {
-                    Location loc = entity.getLocation();
-                    entity.remove();
-                    new WarriorSpawner(loc.getWorld(), loc.getX(), loc.getY() - 1.7, loc.getZ());
                 }
             }
         }

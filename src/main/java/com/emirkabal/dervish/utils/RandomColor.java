@@ -1,6 +1,5 @@
 package com.emirkabal.dervish.utils;
 import java.util.Random;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 
 public class RandomColor {
@@ -40,36 +39,6 @@ public class RandomColor {
             return Color.TEAL;
         } else {
             return Color.SILVER;
-        }
-    }
-
-    public static ChatColor chat() {
-        Random random = new Random();
-        int chance = random.nextInt(16);
-        if (chance <= 6) {
-            return ChatColor.AQUA;
-        } else if (chance <= 7) {
-            return ChatColor.BLUE;
-        } else if (chance <= 8) {
-            return ChatColor.DARK_AQUA;
-        } else if (chance <= 9) {
-            return ChatColor.DARK_BLUE;
-        } else if (chance <= 10) {
-            return ChatColor.DARK_GREEN;
-        } else if (chance <= 11) {
-            return ChatColor.DARK_PURPLE;
-        } else if (chance <= 12) {
-            return ChatColor.DARK_RED;
-        } else if (chance <= 13) {
-            return ChatColor.GOLD;
-        } else if (chance <= 14) {
-            return ChatColor.GREEN;
-        } else if (chance <= 15) {
-            return ChatColor.LIGHT_PURPLE;
-        } else if (chance <= 16) {
-            return ChatColor.RED;
-        } else {
-            return ChatColor.YELLOW;
         }
     }
 }

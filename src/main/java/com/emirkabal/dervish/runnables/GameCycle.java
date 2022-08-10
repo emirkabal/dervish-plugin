@@ -1,0 +1,63 @@
+package com.emirkabal.dervish.runnables;
+
+import com.emirkabal.dervish.Core;
+import com.emirkabal.dervish.Main;
+import com.emirkabal.dervish.utils.PlayerPoints;
+import com.emirkabal.dervish.utils.Sidebar;
+import com.emirkabal.dervish.utils.Utils;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+public class GameCycle extends BukkitRunnable {
+    public static int startTime = 300;
+    public static int time = Integer.valueOf(startTime);
+    public static boolean status = true;
+    public static String timerTitle = Utils.convertTime(time);
+
+    public GameCycle(){
+        this.runTaskTimer(Main.getInstance(), 0, 20);
+    }
+
+    @Override
+    public void run(){
+
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            Sidebar.setScoreboard(players);
+            players.setLevel(time);
+            players.setExp(0);
+        }
+
+        if (status == false) return;
+
+
+        if (time == startTime) {
+            Core.sendMessageToAll("§8[§6"+Math.floor(time / 60)+"§8]§e minutes until the next game§8!");
+        }
+        time -= 1;
+        timerTitle = Utils.convertTime(time);
+        if (time == 5) {
+            Core.sendMessageToAll("§6§lThe winner this round was...");
+            if (PlayerPoints.hasWinner()) {
+                Core.sendMessageToAll("§e"+PlayerPoints.getWinner()+"§6§l!");
+            } else {
+                Core.sendMessageToAll("No winner for this round.");
+            }
+            Core.sendMessageToAll("§6The map will rotate in 5 seconds.");
+        }
+        if(time < 1) {
+            Core.currentWorldNum++;
+            if (Core.currentWorldNum > (Core.worldNames.size() - 1)) {
+                Core.currentWorldNum = 0;
+            }
+
+            PlayerPoints.removeAllPoints();
+            Core.changeWorld(Core.worldNames.get(Core.currentWorldNum), Bukkit.getWorld(Core.currentWorld));
+
+
+            time = startTime;
+        }
+
+
+    }
+}

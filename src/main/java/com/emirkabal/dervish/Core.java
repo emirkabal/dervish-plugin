@@ -87,7 +87,7 @@ public class Core {
             }
         }
 
-        Bukkit.broadcastMessage(Main.PREFIX+"World changed to "+worldName);
+        Core.sendMessageToAll(Main.PREFIX+"World changed to "+worldName);
     }
 
     public static int getPing(Player player) {
@@ -103,6 +103,12 @@ public class Core {
         }
 
         return -1;
+    }
+
+    public static void sendMessageToAll(String message) {
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            players.sendMessage(message);
+        }
     }
 
     public static Location getSpawn(World w, String position) {

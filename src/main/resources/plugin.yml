@@ -8,12 +8,13 @@ commands:
   getposition:
     description: "getposition"
     aliases: ["getpos", "spawn"]
-  eventitem:
   getworld:
   addworld:
   removeworld:
   changeworld:
   setsafelocation:
+  stats:
+  timer:
   ping:
     description: "Calculate player's latency"
     aliases: ["latency"]

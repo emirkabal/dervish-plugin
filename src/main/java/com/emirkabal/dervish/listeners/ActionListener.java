@@ -4,7 +4,6 @@ import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomItem;
 import com.emirkabal.dervish.core.CustomPlayer;
-import com.emirkabal.dervish.runnables.WarriorSpawner;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -45,22 +44,14 @@ public class ActionListener implements Listener {
                 CustomPlayer p = new CustomPlayer(e.getPlayer());
                 p.giveKit();
                 p.getSpigotPlayer().setFoodLevel(20);
-                p.getSpigotPlayer().teleport(Core.getPosition(sign.getWorld().getName()+"."+sign.getLine(2).toLowerCase(Locale.ROOT)));
+                Location loc = Core.getPosition(sign.getWorld().getName()+"."+sign.getLine(2).toLowerCase(Locale.ROOT));
+
+                p.getSpigotPlayer().teleport(loc);
                 p.getSpigotPlayer().sendMessage(Main.PREFIX+"You teleported to "+sign.getLine(2)+".");
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                     e.getPlayer().setGameMode(GameMode.SURVIVAL);
                 }, 20 * 2);
             }
-        }
-    }
-
-    @EventHandler
-    public void onClick(PlayerInteractEvent e){
-        if(e.getItem() != null && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) && e.getItem().getItemMeta() != null && CustomItem.isEventItem(e.getItem()) == true){
-            Player p = e.getPlayer();
-            Location zombiposloc = p.getLocation();
-            new WarriorSpawner(zombiposloc.getWorld(), zombiposloc.getX(), zombiposloc.getY(), zombiposloc.getZ());
-            p.sendMessage(Main.PREFIX+"Event created: "+zombiposloc.getX()+", "+zombiposloc.getY()+", "+zombiposloc.getZ());
         }
     }
 

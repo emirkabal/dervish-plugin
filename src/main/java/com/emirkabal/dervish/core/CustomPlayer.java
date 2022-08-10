@@ -3,7 +3,6 @@ package com.emirkabal.dervish.core;
 import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -121,6 +120,19 @@ public class CustomPlayer extends BukkitRunnable {
     public void removePotionEffects() {
         for(PotionEffect effect : this.player.getActivePotionEffects()) {
             this.player.removePotionEffect(effect.getType());
+        }
+    }
+
+    public void repairAllItems() {
+        for (ItemStack itemStack : this.player.getInventory().getContents()) {
+            if (itemStack != null) {
+                itemStack.setDurability((short)0);
+            }
+        }
+        for (ItemStack itemStack : this.player.getEquipment().getArmorContents()) {
+            if (itemStack != null) {
+                itemStack.setDurability((short)0);
+            }
         }
     }
 

@@ -1,9 +1,11 @@
 package com.emirkabal.dervish.listeners;
 
+import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomItem;
 import com.emirkabal.dervish.core.CustomPlayer;
 import com.emirkabal.dervish.utils.ConfigUtil;
+import com.emirkabal.dervish.utils.PlayerPoints;
 import com.emirkabal.dervish.utils.RandomColor;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -15,15 +17,13 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Repairable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PlayerListener implements Listener {
-
-    public static HashMap<Player, Player> lastdamage = new HashMap();
-    public static HashMap<String, Chicken> chickens = new HashMap();
-    public static HashMap<Chicken, Player> chickenPlayers = new HashMap();
     public static ArrayList<String> inventoryRemoveList = new ArrayList<>();
     public static ArrayList<String> fishingRodCombo = new ArrayList<>();
 
@@ -31,15 +31,20 @@ public class PlayerListener implements Listener {
     public void onDeath(PlayerDeathEvent e) {
         e.getDrops().clear();
         CustomPlayer p = new CustomPlayer(e.getEntity());
-        lastdamage.remove(p.getSpigotPlayer());
         e.setDeathMessage(null);
-        if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) e.setDeathMessage("§a"+e.getEntity().getDisplayName()+"§7 killed by §c"+e.getEntity().getKiller().getDisplayName()+"§7 with §c"+String.format("%.1f", e.getEntity().getKiller().getHealth() / 2)+" heart");
+        if (e.getEntity().getKiller() != null) e.setDeathMessage("§a"+e.getEntity().getName()+"§7 killed by §c"+e.getEntity().getKiller().getName()+"§7 with §c"+String.format("%.1f", e.getEntity().getKiller().getHealth() / 2)+" heart");
         p.sendFirework(FireworkEffect.Type.CREEPER, RandomColor.dye(), RandomColor.dye(), 2);
         p.deathSpectate();
-        p.getSpigotPlayer().setHealth(20);
+        p.getSpigotPlayer().setHealth(p.getSpigotPlayer().getMaxHealth());
         if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
-            e.getEntity().getKiller().getInventory().addItem(CustomItem.of(Material.GOLDEN_APPLE, 1).get());
-            e.getEntity().getKiller().getInventory().addItem(CustomItem.of(Material.ARROW, 1).get());
+            // e.getEntity().getKiller().getInventory().addItem(CustomItem.of(Material.GOLDEN_APPLE, 1).get());
+            CustomPlayer killer = new CustomPlayer(e.getEntity().getKiller());
+            killer.getSpigotPlayer().getInventory().addItem(CustomItem.of(Material.ARROW, 1).get());
+            killer.getSpigotPlayer().setHealth(e.getEntity().getMaxHealth());
+            killer.getSpigotPlayer().playSound(e.getEntity().getKiller().getLocation(), Sound.NOTE_PIANO, 0.6F, 0.6F);
+            killer.repairAllItems();
+            PlayerPoints.addPoints(killer.getSpigotPlayer().getName());
+
             p.getSpigotPlayer().teleport(e.getEntity().getKiller(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(),()->{
                 p.getSpigotPlayer().setSpectatorTarget(e.getEntity().getKiller());
@@ -130,14 +135,6 @@ public class PlayerListener implements Listener {
             if (((Player) damager).getGameMode() == GameMode.ADVENTURE) {
                 event.setCancelled(true);
                 return;
-            } else if (lastdamage.get(player) == null) {
-                Player lastdamager = (Player) event.getDamager();
-                lastdamage.put(player, lastdamager);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
-                    if (lastdamage.get(player) != null) {
-                        lastdamage.remove(player);
-                    }
-                }, 20 * 20);
             }
         }
     }
