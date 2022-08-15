@@ -88,6 +88,13 @@ public class CustomItem {
         return this;
     }
 
+    public CustomItem setUnbreakable(boolean bool) {
+        ItemMeta meta = i.getItemMeta();
+        meta.spigot().setUnbreakable(bool);
+        i.setItemMeta(meta);
+        return this;
+    }
+
     public CustomItem withLore(String... args) {
         ItemMeta meta = i.getItemMeta();
         meta.setLore(Arrays.asList(args));

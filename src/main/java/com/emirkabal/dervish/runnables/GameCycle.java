@@ -6,6 +6,7 @@ import com.emirkabal.dervish.core.CustomPlayer;
 import com.emirkabal.dervish.utils.PlayerPoints;
 import com.emirkabal.dervish.utils.Sidebar;
 import com.emirkabal.dervish.utils.Utils;
+import fr.xephi.authme.api.v3.AuthMeApi;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,22 +23,30 @@ public class GameCycle extends BukkitRunnable {
 
     @Override
     public void run(){
-
-        for (Player players : Bukkit.getOnlinePlayers()) {
-            Sidebar.setScoreboard(players);
-            players.setLevel(time);
-            players.setExp(0);
-        }
-
         if (status == false) return;
 
 
-        if (time == startTime) {
-            Core.sendMessageToAll("§8[§6"+Math.floor(time / 60)+"§8]§e minutes until the next game§8!");
-        }
+
+//        int min = time / 60;
+//
+//        if (time == startTime || min == 5 || min == 4 || min == 3 || min == 2 || min == 1) {
+//            Core.sendMessageToAll("§8[§6"+min+"§8]§e minutes until the next game§8!");
+//        }
+
         time -= 1;
         timerTitle = Utils.convertTime(time);
-        if (time == 5) {
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            if (AuthMeApi.getInstance().isAuthenticated(players)) {
+                Sidebar.setScoreboard(players);
+                players.setLevel(time);
+                players.setExp(0);
+            }
+        }
+
+        if (time == 10) {
+            Core.sendMessageToAll("§8[§610§8]§e seconds until the next game§8!");
+        }
+        else if (time == 5) {
             Core.sendMessageToAll("§6§lThe winner this round was...");
             if (PlayerPoints.hasWinner()) {
                 Core.sendMessageToAll("§e"+PlayerPoints.getWinner()+"§6§l!");
@@ -50,7 +59,7 @@ public class GameCycle extends BukkitRunnable {
             }
             Core.sendMessageToAll("§6The map will rotate in 5 seconds.");
         }
-        if(time < 1) {
+        else if(time < 1) {
             Core.currentWorldNum++;
             if (Core.currentWorldNum > (Core.worldNames.size() - 1)) {
                 Core.currentWorldNum = 0;

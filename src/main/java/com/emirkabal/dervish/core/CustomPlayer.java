@@ -2,12 +2,12 @@ package com.emirkabal.dervish.core;
 
 import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.*;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -71,15 +71,15 @@ public class CustomPlayer extends BukkitRunnable {
 
     public void giveKit() {
         this.clearInventory();
-        ItemStack ironSword = new ItemStack(Material.IRON_SWORD, 1);
-        ItemStack steak = new ItemStack(Material.COOKED_BEEF, 10);
-        ItemStack rod = new ItemStack(Material.FISHING_ROD, 1);
-        ItemStack bow = new ItemStack(Material.BOW, 1);
-        ItemStack arrow = new ItemStack(Material.ARROW, 6);
-        ItemStack ironHelmet = new ItemStack(Material.IRON_HELMET);
-        ItemStack ironChestPlate = new ItemStack(Material.IRON_CHESTPLATE);
-        ItemStack ironLeggings = new ItemStack(Material.IRON_LEGGINGS);
-        ItemStack ironBoots = new ItemStack(Material.IRON_BOOTS);
+        ItemStack ironSword = CustomItem.of(Material.IRON_SWORD).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Sword Mark II").get();
+        ItemStack steak = CustomItem.of(Material.COOKED_BEEF, 10).withName("§4§lMehmet Chef's Special").get();
+        ItemStack rod = CustomItem.of(Material.FISHING_ROD).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Rod Mark II").get();
+        ItemStack bow = CustomItem.of(Material.BOW).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Bow Mark II").get();
+        ItemStack arrow = CustomItem.of(Material.ARROW, 6).withName("§lEmax:§r I'm hate this item.").get();
+        ItemStack ironHelmet = CustomItem.of(Material.IRON_HELMET).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Helmet Mark III").get();
+        ItemStack ironChestPlate = CustomItem.of(Material.IRON_CHESTPLATE).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Chestplate Mark III").get();
+        ItemStack ironLeggings = CustomItem.of(Material.IRON_LEGGINGS).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Leggings Mark III").get();
+        ItemStack ironBoots = CustomItem.of(Material.IRON_BOOTS).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Boots Mark III").get();
         this.player.getInventory().setItem(0, ironSword);
         this.player.getInventory().setItem(1, steak);
         this.player.getInventory().setItem(2, rod);
@@ -89,7 +89,6 @@ public class CustomPlayer extends BukkitRunnable {
         this.player.getInventory().setChestplate(ironChestPlate);
         this.player.getInventory().setLeggings(ironLeggings);
         this.player.getInventory().setBoots(ironBoots);
-
     }
 
     public void fix() {
@@ -107,7 +106,7 @@ public class CustomPlayer extends BukkitRunnable {
 
     public void deathSpectate() {
         this.player.setMaxHealth(20.0D);
-        this.player.setHealth(20.0D);
+        this.player.setHealth(this.player.getMaxHealth());
         this.player.setGameMode(GameMode.SPECTATOR);
         this.player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2));
     }
@@ -145,6 +144,13 @@ public class CustomPlayer extends BukkitRunnable {
             cancel();
         }, 10L);
         this.removePotionEffects();
+    }
+
+    public void sendActionBar(String message) {
+        CraftPlayer player = (CraftPlayer) this.player;
+        IChatBaseComponent chatBaseComponent = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
+        PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatBaseComponent, (byte) 2);
+        player.getHandle().playerConnection.sendPacket(packetPlayOutChat);
     }
 
 

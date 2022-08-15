@@ -47,6 +47,7 @@ public class Main extends JavaPlugin {
         getCommand("ping").setExecutor(new Ping());
         getCommand("stats").setExecutor(new Stats());
         getCommand("timer").setExecutor(new Timer());
+        getCommand("win").setExecutor(new Win());
     }
 
     void loadListeners(){
@@ -55,8 +56,9 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new BlockListener(), this);
         pm.registerEvents(new ConnectionListener(), this);
         pm.registerEvents(new ActionListener(), this);
+        pm.registerEvents(new ProjectileListener(), this);
         pm.registerEvents(new DamageListener(), this);
-        pm.registerEvents(new CustomKnockbackListener(), this);
+//        pm.registerEvents(new CustomKnockbackListener(), this);
     }
 
     public static Main getInstance() {

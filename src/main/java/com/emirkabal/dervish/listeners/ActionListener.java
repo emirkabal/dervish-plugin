@@ -50,7 +50,7 @@ public class ActionListener implements Listener {
                 p.getSpigotPlayer().sendMessage(Main.PREFIX+"You teleported to "+sign.getLine(2)+".");
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                     e.getPlayer().setGameMode(GameMode.SURVIVAL);
-                }, 20 * 2);
+                }, 20);
             }
         }
     }

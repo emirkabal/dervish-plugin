@@ -1,6 +1,8 @@
 package com.emirkabal.dervish.listeners;
 
 import com.emirkabal.dervish.utils.PlayerPoints;
+import com.emirkabal.dervish.utils.Sidebar;
+import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,24 +17,12 @@ public class EntityListener implements Listener {
         e.setCancelled(true);
     }
 
-    @EventHandler
-    public void onPickupProjectileHit(ProjectileHitEvent e) {
-        if (e.getEntityType() != EntityType.ARROW) return;
-        e.getEntity().remove();
-    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onNaturalSpawn(CreatureSpawnEvent e) {
         if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL || e.getEntityType() == EntityType.SKELETON) {
             e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void fishingThrow(ProjectileLaunchEvent e){
-        if(e.getEntityType().equals(EntityType.FISHING_HOOK)){
-            Projectile hook = e.getEntity();
-            hook.setVelocity(hook.getVelocity().multiply(1.38));
         }
     }
 
@@ -45,11 +35,13 @@ public class EntityListener implements Listener {
         }
     }
 
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeathEntity(EntityDeathEvent e){
         if (e.getEntity().getKiller() instanceof Player) {
+            Player p = e.getEntity().getKiller();
+            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1,1);
             PlayerPoints.addPoints(e.getEntity().getKiller().getName());
+            Sidebar.setScoreboard(e.getEntity().getKiller());
         }
         e.setDroppedExp(0);
         e.getDrops().clear();

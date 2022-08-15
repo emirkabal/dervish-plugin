@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -87,13 +88,14 @@ public class Core {
                 player.getInventory().setChestplate(null);
                 player.getInventory().setLeggings(null);
                 player.getInventory().setBoots(null);
-                player.setHealth(20);
+                player.setMaxHealth(20);
+                player.setHealth(player.getMaxHealth());
                 player.setFoodLevel(20);
                 player.setFireTicks(0);
             }
         }
 
-        Core.sendMessageToAll(Main.PREFIX+"World changed to "+worldName);
+        Core.sendMessageToAll(Main.PREFIX+"Map changed!");
     }
 
     public static int getPing(Player player) {
@@ -130,10 +132,25 @@ public class Core {
         fw.setFireworkMeta(fwm);
     }
     public static void applyWinnerEffects(Player p) {
-        spawnFirework(p.getLocation(), FireworkEffect.Type.STAR, RandomColor.dye(), RandomColor.dye(), 2);
-        for (Location loc : Utils.getCircle(p.getLocation().add(0,1,0), 10, 20)) {
-            spawnFirework(loc, FireworkEffect.Type.STAR, RandomColor.dye(), RandomColor.dye(), 2);
+
+        for (Location loc : Utils.getCircle(p.getLocation().add(0,1,0), 2, 10)) {
+            spawnFirework(loc, FireworkEffect.Type.STAR, RandomColor.dye(), RandomColor.dye(), 1);
+            spawnFirework(p.getLocation(), FireworkEffect.Type.STAR, RandomColor.dye(), RandomColor.dye(), 1);
         }
+        new BukkitRunnable() {
+            int fireworks = 0;
+            @Override
+            public void run() {
+                if (fireworks >= 9) {
+                    cancel();
+                }
+                fireworks++;
+                spawnFirework(p.getLocation(), FireworkEffect.Type.STAR, RandomColor.dye(), RandomColor.dye(), 1);
+                for (Location loc : Utils.getCircle(p.getLocation().add(0,1,0), 2, 10)) {
+                    spawnFirework(loc, FireworkEffect.Type.STAR, RandomColor.dye(), RandomColor.dye(), 1);
+                }
+            }
+        }.runTaskTimer(Main.getInstance(), 0, 10);
     }
 
 
