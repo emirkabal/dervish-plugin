@@ -28,6 +28,17 @@ public class CustomItem {
             return false;
         }
     }
+
+    public static ItemStack getArrow() {
+        ItemStack arrow = CustomItem.of(Material.ARROW, 1).withName("§lEmax:§r I'm hate this item.").get();
+        return arrow;
+    }
+    public static ItemStack getArrow(int amount) {
+        ItemStack arrow = CustomItem.of(Material.ARROW, amount).withName("§lEmax:§r I'm hate this item.").get();
+        return arrow;
+    }
+
+
     public static ItemStack getPlayerSkull(String owner, int amount) {
         ItemStack item = new ItemStack(Material.SKULL_ITEM, amount, (short)3);
         SkullMeta itemMeta = (SkullMeta)item.getItemMeta();

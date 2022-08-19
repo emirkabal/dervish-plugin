@@ -75,7 +75,6 @@ public class CustomPlayer extends BukkitRunnable {
         ItemStack steak = CustomItem.of(Material.COOKED_BEEF, 10).withName("§4§lMehmet Chef's Special").get();
         ItemStack rod = CustomItem.of(Material.FISHING_ROD).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Rod Mark II").get();
         ItemStack bow = CustomItem.of(Material.BOW).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Bow Mark II").get();
-        ItemStack arrow = CustomItem.of(Material.ARROW, 6).withName("§lEmax:§r I'm hate this item.").get();
         ItemStack ironHelmet = CustomItem.of(Material.IRON_HELMET).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Helmet Mark III").get();
         ItemStack ironChestPlate = CustomItem.of(Material.IRON_CHESTPLATE).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Chestplate Mark III").get();
         ItemStack ironLeggings = CustomItem.of(Material.IRON_LEGGINGS).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Leggings Mark III").get();
@@ -84,7 +83,7 @@ public class CustomPlayer extends BukkitRunnable {
         this.player.getInventory().setItem(1, steak);
         this.player.getInventory().setItem(2, rod);
         this.player.getInventory().setItem(3, bow);
-        this.player.getInventory().setItem(8, arrow);
+        this.player.getInventory().setItem(8, CustomItem.getArrow(6));
         this.player.getInventory().setHelmet(ironHelmet);
         this.player.getInventory().setChestplate(ironChestPlate);
         this.player.getInventory().setLeggings(ironLeggings);
@@ -104,12 +103,7 @@ public class CustomPlayer extends BukkitRunnable {
 
     }
 
-    public void deathSpectate() {
-        this.player.setMaxHealth(20.0D);
-        this.player.setHealth(this.player.getMaxHealth());
-        this.player.setGameMode(GameMode.SPECTATOR);
-        this.player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2));
-    }
+
 
     public void removePotionEffects() {
         for(PotionEffect effect : this.player.getActivePotionEffects()) {
@@ -130,19 +124,38 @@ public class CustomPlayer extends BukkitRunnable {
         }
     }
 
+    // respawn callers
+
+    public void deathSpectate() {
+        this.player.setMaxHealth(20.0D);
+        this.player.setHealth(this.player.getMaxHealth());
+        this.player.setGameMode(GameMode.SPECTATOR);
+        if (!this.player.isFlying()) {
+            this.player.setAllowFlight(true);
+            this.player.setFlying(true);
+        }
+        this.player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2));
+    }
+
     public void forceRespawn() {
+        this.player.hidePlayer(this.player);
         this.player.teleport(Core.getSpawn(this.player.getWorld(), ""));
         this.player.setGameMode(GameMode.ADVENTURE);
+        if (this.player.isFlying()) {
+            this.player.setFlying(false);
+            this.player.setAllowFlight(false);
+        }
         this.clearInventory();
         this.player.setMaxHealth(20);
         this.player.setHealth(20);
         this.player.setFoodLevel(20);
         this.player.setFireTicks(0);
-        this.player.hidePlayer(this.player);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
-            CustomPlayer.this.player.showPlayer(CustomPlayer.this.player);
-            cancel();
-        }, 10L);
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                CustomPlayer.this.player.showPlayer(CustomPlayer.this.player);
+            }
+        }.runTaskLater(Main.getInstance(), 10);
         this.removePotionEffects();
     }
 

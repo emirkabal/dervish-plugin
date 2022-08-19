@@ -19,6 +19,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,23 +39,31 @@ public class PlayerListener implements Listener {
         p.getSpigotPlayer().setHealth(p.getSpigotPlayer().getMaxHealth());
         if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
             // e.getEntity().getKiller().getInventory().addItem(CustomItem.of(Material.GOLDEN_APPLE, 1).get());
+            p.sendActionBar("§c§lYou were slain by §e"+e.getEntity().getKiller().getName());
             CustomPlayer killer = new CustomPlayer(e.getEntity().getKiller());
-            killer.getSpigotPlayer().getInventory().addItem(CustomItem.of(Material.ARROW, 1).get());
+            killer.getSpigotPlayer().getInventory().addItem(CustomItem.getArrow());
             killer.getSpigotPlayer().setHealth(e.getEntity().getMaxHealth());
+            killer.sendActionBar("§a§lYou killed §e"+e.getEntity().getName());
 
             p.getSpigotPlayer().teleport(e.getEntity().getKiller(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(),()->{
                 p.getSpigotPlayer().setSpectatorTarget(e.getEntity().getKiller());
             },8);
         }
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
             p.forceRespawn();
         }, 20 * 2);
     }
 
     @EventHandler
+    public void onJoine(PlayerSpawnLocationEvent e) {
+        e.setSpawnLocation(Core.getPosition("lobby.spawn"));
+    }
+
+    @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
-        e.setRespawnLocation(Core.getPosition("lobby.spawn"));
+        e.setRespawnLocation(Core.getSpawn(Bukkit.getWorld(Core.currentWorld), ""));
     }
 
     @EventHandler
@@ -127,9 +136,12 @@ public class PlayerListener implements Listener {
             Player p = (Player) arrow.getShooter();
             CustomPlayer cp = new CustomPlayer(p);
             LivingEntity entity = (LivingEntity) event.getEntity();
-            String message = "§a"+event.getEntity().getName()+"§r health is §c"+String.format("%.1f", entity.getHealth() / 2)+"❤";
-            p.sendMessage(Main.PREFIX+ message);
-            cp.sendActionBar(message);
+            double entityHealth = entity.getHealth() - event.getFinalDamage();
+            if (entityHealth > 0) {
+                String message = "§e"+event.getEntity().getName()+"§r's health is §c"+String.format("%.1f", entityHealth / 2)+"❤";
+                p.sendMessage(message);
+                cp.sendActionBar(message);
+            }
         }
 
         if (damager instanceof Player && event.getEntity() instanceof Player) {

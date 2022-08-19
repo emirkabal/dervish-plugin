@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -29,6 +30,10 @@ public class ConnectionListener implements Listener {
     public void onLeave(PlayerQuitEvent e){
         e.setQuitMessage(null);
         Player p = e.getPlayer();
+        p.setLevel(0);
+        for ( Player  players : Bukkit.getOnlinePlayers()) {
+            players.playSound(players.getLocation(), Sound.NOTE_STICKS, 1,1);
+        }
         if (PlayerListener.lastdamage.get(p) != null) {
             p.setHealth(0);
         }
@@ -41,7 +46,7 @@ public class ConnectionListener implements Listener {
         e.setJoinMessage((p.isOp() ? "§4" : "§a")+p.getDisplayName()+" §7joined the game.");
         CustomPlayer cp = new CustomPlayer(p);
         for ( Player  players : Bukkit.getOnlinePlayers()) {
-            players.playSound(p.getLocation(), Sound.NOTE_PIANO, 0.3F, 0.3F);
+            players.playSound(players.getLocation(), Sound.NOTE_PIANO, 1,1);
         }
         p.teleport(Core.getPosition("lobby.spawn"));
         cp.clearInventory();

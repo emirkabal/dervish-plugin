@@ -6,11 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
@@ -51,6 +49,28 @@ public class BlockListener implements Listener {
             e.setCancelled(true);
         }
     }
+
+
+    // block item frame breaking
+    @EventHandler
+    public void onHangingBreak(HangingBreakByEntityEvent e) {
+        if (e.getRemover() instanceof Player) {
+            Player p = (Player) e.getRemover();
+            if (p.getGameMode() != GameMode.CREATIVE) {
+                e.setCancelled(true);
+            }
+        }
+    }
+
+
+    // block fire spreading
+    @EventHandler
+    public void igniteEvent(BlockIgniteEvent e) {
+        if (e.getCause() == BlockIgniteEvent.IgniteCause.SPREAD || e.getCause() == BlockIgniteEvent.IgniteCause.LAVA) {
+            e.setCancelled(true);
+        }
+    }
+
 
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent e) {

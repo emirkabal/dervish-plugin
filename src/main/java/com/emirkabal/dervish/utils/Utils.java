@@ -1,5 +1,6 @@
 package com.emirkabal.dervish.utils;
 
+import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.core.CustomPlayer;
 import com.emirkabal.dervish.runnables.GameCycle;
@@ -35,13 +36,14 @@ public class Utils {
     }
     public static void pluginEnabled(){
         new GameCycle();
-        for(World world : Bukkit.getWorlds()){
-            for(Entity entity: world.getEntities()){
-                if(entity instanceof Player){
-                    CustomPlayer cp = new CustomPlayer((Player) entity);
-                    cp.getSpigotPlayer().sendMessage(Main.PREFIX+"Plugin reloaded.");
-                }
-            }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+            CustomPlayer cp = new CustomPlayer(player);
+            String msg = "Battlegrounds reloaded.";
+            cp.getSpigotPlayer().sendMessage(msg);
+            cp.sendActionBar(msg);
+            cp.getSpigotPlayer().teleport(Core.getPosition("lobby.spawn"));
+            cp.getSpigotPlayer().sendMessage("§6§lWarning:§r §eRelogin required! /login <password>");
         }
     }
 

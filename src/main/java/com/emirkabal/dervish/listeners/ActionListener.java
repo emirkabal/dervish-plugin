@@ -47,7 +47,7 @@ public class ActionListener implements Listener {
                 Location loc = Core.getPosition(sign.getWorld().getName()+"."+sign.getLine(2).toLowerCase(Locale.ROOT));
 
                 p.getSpigotPlayer().teleport(loc);
-                p.getSpigotPlayer().sendMessage(Main.PREFIX+"You teleported to "+sign.getLine(2)+".");
+                p.getSpigotPlayer().sendMessage("§rWarped to "+sign.getLine(2)+"!");
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                     e.getPlayer().setGameMode(GameMode.SURVIVAL);
                 }, 20);
