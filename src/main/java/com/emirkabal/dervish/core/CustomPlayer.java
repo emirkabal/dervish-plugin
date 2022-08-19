@@ -71,23 +71,15 @@ public class CustomPlayer extends BukkitRunnable {
 
     public void giveKit() {
         this.clearInventory();
-        ItemStack ironSword = CustomItem.of(Material.IRON_SWORD).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Sword Mark II").get();
-        ItemStack steak = CustomItem.of(Material.COOKED_BEEF, 10).withName("§4§lMehmet Chef's Special").get();
-        ItemStack rod = CustomItem.of(Material.FISHING_ROD).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Rod Mark II").get();
-        ItemStack bow = CustomItem.of(Material.BOW).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Bow Mark II").get();
-        ItemStack ironHelmet = CustomItem.of(Material.IRON_HELMET).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Helmet Mark III").get();
-        ItemStack ironChestPlate = CustomItem.of(Material.IRON_CHESTPLATE).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Chestplate Mark III").get();
-        ItemStack ironLeggings = CustomItem.of(Material.IRON_LEGGINGS).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Leggings Mark III").get();
-        ItemStack ironBoots = CustomItem.of(Material.IRON_BOOTS).setUnbreakable(true).withName("§7§lBattlegrounds§r PvP-Boots Mark III").get();
-        this.player.getInventory().setItem(0, ironSword);
-        this.player.getInventory().setItem(1, steak);
-        this.player.getInventory().setItem(2, rod);
-        this.player.getInventory().setItem(3, bow);
-        this.player.getInventory().setItem(8, CustomItem.getArrow(6));
-        this.player.getInventory().setHelmet(ironHelmet);
-        this.player.getInventory().setChestplate(ironChestPlate);
-        this.player.getInventory().setLeggings(ironLeggings);
-        this.player.getInventory().setBoots(ironBoots);
+        this.player.getInventory().setItem(0, CustomItem.of(Material.IRON_SWORD).setUnbreakable(true).withName("§7§lBattlegrounds§r Sword").get());
+        this.player.getInventory().setItem(1, CustomItem.getFood(10));
+        this.player.getInventory().setItem(2, CustomItem.of(Material.FISHING_ROD).setUnbreakable(true).withName("§7§lBattlegrounds§r Rod").get());
+        this.player.getInventory().setItem(3, CustomItem.of(Material.BOW).setUnbreakable(true).withName("§7§lBattlegrounds§r Bow").get());
+        this.player.getInventory().setItem(8, CustomItem.getArrow(7));
+        this.player.getInventory().setHelmet(CustomItem.of(Material.IRON_HELMET).setUnbreakable(true).withName("§7§lBattlegrounds§r Helmet").get());
+        this.player.getInventory().setChestplate(CustomItem.of(Material.IRON_CHESTPLATE).setUnbreakable(true).withName("§7§lBattlegrounds§r Kevlar Vest").get());
+        this.player.getInventory().setLeggings(CustomItem.of(Material.IRON_LEGGINGS).setUnbreakable(true).withName("§7§lBattlegrounds§r Pants").get());
+        this.player.getInventory().setBoots(CustomItem.of(Material.IRON_BOOTS).setUnbreakable(true).withName("§7§lBattlegrounds§r Boots").get());
     }
 
     public void fix() {

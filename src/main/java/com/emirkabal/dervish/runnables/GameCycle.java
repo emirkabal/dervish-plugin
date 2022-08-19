@@ -38,8 +38,6 @@ public class GameCycle extends BukkitRunnable {
         for (Player players : Bukkit.getOnlinePlayers()) {
             if (AuthMeApi.getInstance().isAuthenticated(players)) {
                 Sidebar.setScoreboard(players);
-                players.setLevel(time);
-                players.setExp(0);
             }
         }
 

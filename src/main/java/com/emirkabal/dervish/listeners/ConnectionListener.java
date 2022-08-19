@@ -34,7 +34,7 @@ public class ConnectionListener implements Listener {
         for ( Player  players : Bukkit.getOnlinePlayers()) {
             players.playSound(players.getLocation(), Sound.NOTE_STICKS, 1,1);
         }
-        if (PlayerListener.lastdamage.get(p) != null) {
+        if (PlayerListener.lastdamage.get(p) != null && p.getGameMode() == GameMode.SURVIVAL) {
             p.setHealth(0);
         }
         e.setQuitMessage((p.isOp() ? "§4" : "§a")+p.getDisplayName()+" §7left the game.");

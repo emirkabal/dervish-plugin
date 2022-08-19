@@ -2,6 +2,7 @@ package com.emirkabal.dervish.listeners;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -9,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
@@ -40,6 +42,15 @@ public class BlockListener implements Listener {
                 )
         ) {
             e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void FrameRotate(PlayerInteractEntityEvent e) {
+        if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) {
+            if (e.getPlayer().getGameMode() != GameMode.CREATIVE) {
+                e.setCancelled(true);
+            }
         }
     }
 

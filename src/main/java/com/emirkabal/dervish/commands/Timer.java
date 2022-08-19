@@ -3,6 +3,8 @@ package com.emirkabal.dervish.commands;
 import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.runnables.GameCycle;
+import com.emirkabal.dervish.utils.Sidebar;
+import fr.xephi.authme.api.v3.AuthMeApi;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,12 +33,17 @@ public class Timer implements CommandExecutor {
             return false;
         }
 
-        if (args[0].equalsIgnoreCase("start")) {
+        if (args[0].equalsIgnoreCase("start") || args[0].equalsIgnoreCase("resume")) {
             GameCycle.status = true;
-            p.sendMessage("Timer started.");
-        } else if (args[0].equalsIgnoreCase("stop")) {
+            p.sendMessage("Timer resumed.");
+        } else if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("pause")) {
             GameCycle.status = false;
-            p.sendMessage("Timer stopped.");
+            p.sendMessage("Timer paused.");
+            for (Player players : Bukkit.getOnlinePlayers()) {
+                if (AuthMeApi.getInstance().isAuthenticated(players)) {
+                    Sidebar.setScoreboard(players);
+                }
+            }
         } else {
             try {
                 int time = (int) Integer.parseInt(args[0]);

@@ -37,11 +37,11 @@ public class EntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeathEntity(EntityDeathEvent e){
-        if (e.getEntity().getKiller() instanceof Player) {
+        if (e.getEntity().getKiller() instanceof Player && e.getEntity().getUniqueId() != e.getEntity().getKiller().getUniqueId()) {
             Player p = e.getEntity().getKiller();
             p.playSound(p.getLocation(), Sound.NOTE_PLING, 1,1);
-            PlayerPoints.addPoints(e.getEntity().getKiller().getName());
-            Sidebar.setScoreboard(e.getEntity().getKiller());
+            PlayerPoints.addPoints(p.getName());
+            Sidebar.setScoreboard(p);
         }
         e.setDroppedExp(0);
         e.getDrops().clear();

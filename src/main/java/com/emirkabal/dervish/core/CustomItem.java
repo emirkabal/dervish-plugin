@@ -30,11 +30,21 @@ public class CustomItem {
     }
 
     public static ItemStack getArrow() {
-        ItemStack arrow = CustomItem.of(Material.ARROW, 1).withName("§lEmax:§r I'm hate this item.").get();
+        ItemStack arrow = CustomItem.of(Material.ARROW).withName("§lEmax:§r I'm hate this item.").get();
         return arrow;
     }
     public static ItemStack getArrow(int amount) {
         ItemStack arrow = CustomItem.of(Material.ARROW, amount).withName("§lEmax:§r I'm hate this item.").get();
+        return arrow;
+    }
+
+    public static ItemStack getFood() {
+        ItemStack arrow = CustomItem.of(Material.GRILLED_PORK).withName("§7§lBattlegrounds§r Food").get();
+        return arrow;
+    }
+
+    public static ItemStack getFood(int amount) {
+        ItemStack arrow = CustomItem.of(Material.GRILLED_PORK, amount).withName("§7§lBattlegrounds§r Food").get();
         return arrow;
     }
 

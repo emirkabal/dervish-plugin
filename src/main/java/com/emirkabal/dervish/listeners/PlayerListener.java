@@ -33,17 +33,18 @@ public class PlayerListener implements Listener {
         e.getDrops().clear();
         CustomPlayer p = new CustomPlayer(e.getEntity());
         e.setDeathMessage(null);
-        if (e.getEntity().getKiller() != null) Core.sendMessageToAll("§a"+e.getEntity().getName()+"§7 killed by §c"+e.getEntity().getKiller().getName()+"§7 with §c"+String.format("%.1f", e.getEntity().getKiller().getHealth() / 2)+"❤");
+        if (e.getEntity().getKiller() != null && e.getEntity().getUniqueId() != e.getEntity().getKiller().getUniqueId()) Core.sendMessageToAll("§a"+e.getEntity().getName()+"§7 killed by §c"+e.getEntity().getKiller().getName()+"§7 with §c"+String.format("%.1f", e.getEntity().getKiller().getHealth() / 2)+"❤");
         p.sendFirework(FireworkEffect.Type.CREEPER, RandomColor.dye(), RandomColor.dye(), 2);
         p.deathSpectate();
         p.getSpigotPlayer().setHealth(p.getSpigotPlayer().getMaxHealth());
-        if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
+        if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player && e.getEntity().getUniqueId() != e.getEntity().getKiller().getUniqueId()) {
             // e.getEntity().getKiller().getInventory().addItem(CustomItem.of(Material.GOLDEN_APPLE, 1).get());
             p.sendActionBar("§c§lYou were slain by §e"+e.getEntity().getKiller().getName());
             CustomPlayer killer = new CustomPlayer(e.getEntity().getKiller());
             killer.getSpigotPlayer().getInventory().addItem(CustomItem.getArrow());
             killer.getSpigotPlayer().setHealth(e.getEntity().getMaxHealth());
             killer.sendActionBar("§a§lYou killed §e"+e.getEntity().getName());
+            killer.getSpigotPlayer().getInventory().addItem(CustomItem.getFood(2));
 
             p.getSpigotPlayer().teleport(e.getEntity().getKiller(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(),()->{
@@ -127,11 +128,49 @@ public class PlayerListener implements Listener {
         }
     }
 
+    //fishing
+    @EventHandler
+    public void onFishing(PlayerFishEvent e) {
+        if (e.getCaught() instanceof Item) {
+            Item stack = (Item) e.getCaught();
+            double random = Math.random();
+            if (random <= 0.001) {
+                stack.setItemStack(CustomItem.of(Material.GOLDEN_APPLE).setDurability((short) 1).withName("0.001%").get());
+                e.getPlayer().sendMessage("YOU ARE SO LUCKY!");
+            } else if (random <= 0.05) {
+                stack.setItemStack(CustomItem.of(Material.DIAMOND_SWORD).withName("0.05%").get());
+                e.getPlayer().sendMessage("YOU ARE SO LUCKY!");
+            } else if (random <= 0.4) {
+                stack.setItemStack(CustomItem.of(Material.GOLDEN_APPLE).get());
+            } else if (random <= 0.6) {
+                stack.setItemStack(CustomItem.getArrow(2));
+            } else if (random <= 1) {
+                stack.setItemStack(CustomItem.getFood(2));
+            }
+        }
+    }
+
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
 
-        if (damager instanceof Projectile && damager.getType() == EntityType.ARROW && ((Projectile) damager).getShooter() instanceof Player && !event.getEntity().isDead()) {
+        if (event.getEntity() instanceof ItemFrame) {
+            if (event.getDamager() instanceof Player) {
+                if (((Player) event.getDamager()).getGameMode() != GameMode.CREATIVE) {
+                    event.setCancelled(true);
+                }
+            }
+            if (damager instanceof Projectile) {
+                if (((Projectile) event.getDamager()).getShooter() instanceof Player) {
+                    if (((Player) ((Projectile) event.getDamager()).getShooter()).getGameMode() != GameMode.CREATIVE) {
+                        event.getDamager().remove();
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+
+        if (damager instanceof Projectile && damager.getType() == EntityType.ARROW && ((Projectile) damager).getShooter() instanceof Player && !event.getEntity().isDead() && event.getEntity().getUniqueId() != ((Player) ((Projectile) damager).getShooter()).getUniqueId()) {
             Arrow arrow = (Arrow) damager;
             Player p = (Player) arrow.getShooter();
             CustomPlayer cp = new CustomPlayer(p);
@@ -148,7 +187,7 @@ public class PlayerListener implements Listener {
             Player player = (Player) event.getEntity();
             if (((Player) damager).getGameMode() == GameMode.ADVENTURE) {
                 event.setCancelled(true);
-            } else if (lastdamage.get(player) == null) {
+            } else if (lastdamage.get(player) == null && event.getDamager().getUniqueId() != player.getUniqueId()) {
                 Player lastdamager = (Player) event.getDamager();
                 lastdamage.put(player, lastdamager);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {

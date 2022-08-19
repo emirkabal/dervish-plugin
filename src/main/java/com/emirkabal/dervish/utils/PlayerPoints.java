@@ -1,5 +1,7 @@
 package com.emirkabal.dervish.utils;
 
+import org.bukkit.Bukkit;
+
 import java.util.*;
 
 public class PlayerPoints {
@@ -7,7 +9,7 @@ public class PlayerPoints {
     public static Map<String, Integer> points = new HashMap<>();
 
     public static List<Map.Entry<String, Integer>> getPoints() {
-        List<Map.Entry<String, Integer>> list = new LinkedList<>(points.entrySet());
+        LinkedList<Map.Entry<String, Integer>> list = new LinkedList(points.entrySet());
 
         if (list.size() == 0) {
             return (new ArrayList());
@@ -39,6 +41,21 @@ public class PlayerPoints {
         } catch (Exception e) {
             return "#"+(rank+1);
         }
+    }
+
+    public static int getRank(String name) {
+        List board = getPoints();
+        if (!hasPoints(name) || board.size() == 0) return -1;
+        int result = 0;
+        for (int i = 0; i < board.toArray().length; i++) {
+            if (board.get(i) != null) {
+                String indexName = board.get(i).toString().split("=" )[0];
+                if (indexName.equalsIgnoreCase(name)) {
+                    result = i;
+                }
+            }
+        }
+        return result + 1;
     }
 
     public static boolean hasPoints(String name) {

@@ -3,6 +3,7 @@ package com.emirkabal.dervish.commands;
 import com.emirkabal.dervish.Core;
 import com.emirkabal.dervish.Main;
 import com.emirkabal.dervish.runnables.GameCycle;
+import com.emirkabal.dervish.utils.PlayerPoints;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,6 +27,7 @@ public class Win implements CommandExecutor {
         }
 
         Core.applyWinnerEffects(p);
+        p.sendMessage(PlayerPoints.getPoints().toString());
         p.sendMessage("Okay champ");
 
         return false;
