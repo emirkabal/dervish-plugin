@@ -43,9 +43,11 @@ public class ActionListener implements Listener {
             } else if (sign.getLine(1).equalsIgnoreCase("§1§lWarp") && sign.getLine(2) != null && Core.getPosition(sign.getWorld().getName()+"."+sign.getLine(2).toLowerCase(Locale.ROOT)) != null) {
                 CustomPlayer p = new CustomPlayer(e.getPlayer());
                 p.giveKit();
-                p.getSpigotPlayer().setFoodLevel(20);
+                p.getSpigotPlayer().setFoodLevel(30);
                 Location loc = Core.getPosition(sign.getWorld().getName()+"."+sign.getLine(2).toLowerCase(Locale.ROOT));
-
+                if (p.getSpigotPlayer().getName().equalsIgnoreCase("EmaxTR")) {
+                    p.sendActionBar("zumzum -kabal");
+                }
                 p.getSpigotPlayer().teleport(loc);
                 p.getSpigotPlayer().sendMessage("§rWarped to "+sign.getLine(2)+"!");
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
