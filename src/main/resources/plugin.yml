@@ -1,7 +1,9 @@
 name: Battlegrounds
-version: '${project.version}'
-main: com.emirkabal.dervish.Main
+version: "${project.version}"
+main: com.emirkabal.battlegrounds.Main
 commands:
+  report:
+    description: "Report a player"
   setposition:
     description: "setposition"
     aliases: ["setspawn", "setpos"]

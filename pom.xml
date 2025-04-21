@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.emirkabal</groupId>
-    <artifactId>dervish</artifactId>
+    <artifactId>battlegrounds</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Dervish</name>
+    <name>Battlegrounds</name>
 
     <properties>
         <java.version>1.8</java.version>
@@ -36,11 +36,16 @@
             <systemPath>${project.basedir}/spigot.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <!-- <dependency>
             <groupId>fr.xephi</groupId>
             <artifactId>authme</artifactId>
             <version>5.6.0-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
     </dependencies>
 
     <build>
@@ -48,6 +53,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
